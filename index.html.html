@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSC426</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #fff; color: #111; min-height: 100vh; }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.show { display: flex; flex-direction: column; }
+
+  #home { align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
+  #home h1 { font-size: 26px; margin-bottom: 8px; }
+  #home p { font-size: 14px; color: #666; margin-bottom: 48px; font-style: italic; }
+  #home .choices { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  #home .choice { border: 2px solid #111; padding: 28px 36px; cursor: pointer; text-align: center; min-width: 160px; }
+  #home .choice:hover { background: #f5f5f5; }
+  #home .choice .icon { font-size: 28px; display: block; margin-bottom: 10px; }
+  #home .choice h2 { font-size: 15px; margin-bottom: 4px; }
+  #home .choice p { font-size: 12px; color: #888; font-style: normal; margin: 0; }
+  #home footer { position: absolute; bottom: 20px; font-size: 12px; color: #ccc; }
+
+  .inner-screen { flex: 1; padding: 30px 20px; max-width: 400px; margin: 0 auto; width: 100%; }
+  .back-bar { border-bottom: 1px solid #ddd; padding: 13px 20px; display: flex; align-items: center; gap: 12px; }
+  .back-bar button { background: none; border: none; cursor: pointer; font-family: Georgia, serif; font-size: 14px; color: #555; padding: 0; }
+  .back-bar button:hover { color: #111; }
+  .back-bar h2 { font-size: 15px; margin: 0; }
+
+  .disp { border: 2px solid #111; padding: 10px 14px; font-size: 28px; text-align: right; min-height: 54px; margin-bottom: 12px; background: #fafafa; word-break: break-all; }
+  .pad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .kb { padding: 14px 0; font-size: 15px; text-align: center; cursor: pointer; border: 1px solid #bbb; font-family: Georgia, serif; background: #fff; }
+  .kb:hover { background: #f5f5f5; }
+  .kb.fn { font-style: italic; background: #f5f5f5; }
+  .kb.cc { background: #e8e8e8; }
+  .kb.eq { background: #111; color: #fff; grid-column: span 2; font-style: normal; }
+  .kb.eq:hover { background: #333; }
+
+  .lf { margin-bottom: 16px; }
+  .lf label { display: block; font-size: 13px; margin-bottom: 5px; font-style: italic; color: #555; }
+  .lf input { width: 100%; padding: 9px 12px; border: 1px solid #bbb; font-family: Georgia, serif; font-size: 14px; }
+  .lf input:focus { outline: 2px solid #111; }
+  .lferr { font-size: 12px; color: #a00; display: none; margin-top: 4px; }
+  .lferr.on { display: block; }
+  .lbrow { display: flex; gap: 10px; margin-top: 18px; }
+  .lbrow button { flex: 1; padding: 10px; font-family: Georgia, serif; font-size: 14px; border: 1px solid #555; cursor: pointer; }
+  .lbrow .s { background: #111; color: #fff; border-color: #111; }
+  .lbrow .s:hover { background: #333; }
+  .lbrow .r { background: #fff; }
+  .lbrow .r:hover { background: #f5f5f5; }
+  .lmsg { margin-top: 14px; padding: 10px 12px; font-size: 13px; border: 1px solid #ccc; display: none; font-style: italic; }
+  .lmsg.bad { color: #900; font-style: normal; border-color: #ecc; }
+</style>
+</head>
+<body>
+
+<div class="screen show" id="home">
+  <h1>CSC 426</h1>
+  <p>Adekunle Ajasin University - Practical Assignment</p>
+  <div class="choices">
+    <div class="choice" onclick="go('calc')">
+      <span class="icon">+-</span>
+      <h2>Calculator</h2>
+      <p>Arithmetic operations</p>
+    </div>
+    <div class="choice" onclick="go('login')">
+      <span class="icon">[]</span>
+      <h2>Login App</h2>
+      <p>Authentication form</p>
+    </div>
+  </div>
+  <footer>2024/2025 Academic Session</footer>
+</div>
+
+<div class="screen" id="calc">
+  <div class="back-bar">
+    <button onclick="go('home')">&#8592; Back</button>
+    <h2>Calculator</h2>
+  </div>
+  <div class="inner-screen">
+    <div class="disp" id="dB">0</div>
+    <div class="pad">
+      <button class="kb cc" onclick="cB()">C</button>
+      <button class="kb fn" onclick="oB('^')">x^y</button>
+      <button class="kb fn" onclick="oB('%')">mod</button>
+      <button class="kb fn" onclick="oB('/')">div</button>
+      <button class="kb" onclick="nB('7')">7</button>
+      <button class="kb" onclick="nB('8')">8</button>
+      <button class="kb" onclick="nB('9')">9</button>
+      <button class="kb fn" onclick="oB('*')">mul</button>
+      <button class="kb" onclick="nB('4')">4</button>
+      <button class="kb" onclick="nB('5')">5</button>
+      <button class="kb" onclick="nB('6')">6</button>
+      <button class="kb fn" onclick="oB('-')">sub</button>
+      <button class="kb" onclick="nB('1')">1</button>
+      <button class="kb" onclick="nB('2')">2</button>
+      <button class="kb" onclick="nB('3')">3</button>
+      <button class="kb fn" onclick="oB('+')">add</button>
+      <button class="kb" onclick="nB('0')">0</button>
+      <button class="kb" onclick="nB('.')">.</button>
+      <button class="kb eq" onclick="eB()">=</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="login">
+  <div class="back-bar">
+    <button onclick="go('home')">&#8592; Back</button>
+    <h2>Login</h2>
+  </div>
+  <div class="inner-screen">
+    <div class="lf">
+      <label>Username</label>
+      <input type="text" id="uB" autocomplete="off" placeholder="Enter your username">
+      <div class="lferr" id="ueB">Please enter your username.</div>
+    </div>
+    <div class="lf">
+      <label>Password</label>
+      <input type="password" id="pB" placeholder="Enter your password">
+      <div class="lferr" id="peB">Password must be at least 6 characters.</div>
+    </div>
+    <div class="lbrow">
+      <button class="s" onclick="lgB()">Login</button>
+      <button class="r" onclick="rsB()">Reset</button>
+    </div>
+    <div class="lmsg" id="mB"></div>
+  </div>
+</div>
+
+<script>
+  function go(which) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('show'); });
+    document.getElementById(which).classList.add('show');
+  }
+
+  var exB = '', jcB = false;
+  function sdB(v) { document.getElementById('dB').textContent = v || '0'; }
+  function nB(d) { if (jcB) { exB=''; jcB=false; } if (d==='.'&&exB.split(/[+\-*/%^]/).pop().includes('.')) return; exB+=d; sdB(exB); }
+  function oB(op) { jcB=false; if (!exB&&op!=='-') return; if (exB&&'+-*/%^'.includes(exB.slice(-1))) exB=exB.slice(0,-1); exB+=op; sdB(exB); }
+  function cB() { exB=''; jcB=false; sdB('0'); }
+  function eB() {
+    if (!exB) return;
+    try {
+      var r=Function('"use strict";return('+exB.replace(/\^/g,'**')+')')(  );
+      if (!isFinite(r)) { sdB('Error'); exB=''; return; }
+      r=parseFloat(r.toFixed(10)); exB=String(r); sdB(exB); jcB=true;
+    } catch(e) { sdB('Error'); exB=''; }
+  }
+
+  function lgB() {
+    var u=document.getElementById('uB').value.trim(), p=document.getElementById('pB').value;
+    var ue=document.getElementById('ueB'), pe=document.getElementById('peB'), m=document.getElementById('mB');
+    ue.className='lferr'; pe.className='lferr'; m.style.display='none';
+    var ok=true;
+    if (!u) { ue.className='lferr on'; ok=false; }
+    if (p.length<6) { pe.className='lferr on'; ok=false; }
+    if (!ok) return;
+    m.style.display='block';
+    if (u==='admin'&&p==='admin123') { m.className='lmsg'; m.textContent='Login successful. Welcome, '+u+'.'; }
+    else { m.className='lmsg bad'; m.textContent='Login failed. The credentials are incorrect.'; }
+  }
+
+  function rsB() {
+    document.getElementById('uB').value=''; document.getElementById('pB').value='';
+    document.getElementById('ueB').className='lferr'; document.getElementById('peB').className='lferr';
+    var m=document.getElementById('mB'); m.style.display='none'; m.className='lmsg';
+  }
+</script>
+</body>
+</html>
